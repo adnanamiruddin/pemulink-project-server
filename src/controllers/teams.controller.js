@@ -17,36 +17,40 @@ const createTeam = async (req, res) => {
     if (role !== "user") return responseHandler.forbidden(res);
 
     const { id } = req.user;
-    const dataReq = req.body;
+    // const dataReq = req.body;
 
     const { competitionId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    // Get the first 3 characters of the competition name
-    const competitionName = competitionDoc.data().name;
-    const competitionCode =
-      competitionName.slice(0, 1) +
-      competitionName.charAt(Math.floor(competitionName.length / 2)) +
-      competitionName.slice(-1);
-    // Create 4 characters in the form of uppercase letters and a unique random number
-    const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+    // // Get the first 3 characters of the competition name
+    // const competitionName = competitionDoc.data().name;
+    // const middleIndex = Math.floor(competitionName.length / 2);
+    // const competitionCode =
+    //   competitionName.slice(0, 1) +
+    //   (competitionName.charAt(middleIndex) === " "
+    //     ? "P"
+    //     : competitionName.charAt(middleIndex)) +
+    //   competitionName.slice(-1);
 
-    const teamCode = competitionCode + randomCode;
+    // // Create 4 characters in the form of uppercase letters and a unique random number
+    // const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
 
-    // Validate teamCode must unique
-    const teamDoc = await getDoc(
-      query(Teams, where("competitionId", "==", competitionId))
-    );
-    if (teamDoc.exists())
-      return responseHandler.badRequest(
-        res,
-        "Team already exists. Please try again"
-      );
+    // const teamCode = competitionCode + randomCode;
 
+    // // Validate teamCode must unique
+    // const teamDoc = await getDoc(
+    //   query(Teams, where("competitionId", "==", competitionId))
+    // );
+    // if (teamDoc.exists())
+    //   return responseHandler.badRequest(
+    //     res,
+    //     "Team already exists. Please try again"
+    //   );
+
+    dataReq.competitionId = competitionId;
     dataReq.code = teamCode;
     dataReq.members = [id];
-    dataReq.competitionId = competitionId;
 
     dataReq.createdAt = new Date();
     dataReq.createdBy = id;

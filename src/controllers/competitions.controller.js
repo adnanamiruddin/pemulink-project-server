@@ -54,10 +54,10 @@ const getCompetitionById = async (req, res) => {
 
 const updateCompetition = async (req, res) => {
   try {
-    const { id } = req.params;
     const { role } = req.user.data;
     if (role !== "super-admin") return responseHandler.forbidden(res);
 
+    const { id } = req.params;
     const dataReq = req.body;
 
     const competitionDoc = await getDoc(doc(Competitions, id));
