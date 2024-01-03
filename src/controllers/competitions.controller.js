@@ -135,9 +135,6 @@ const addMissionToCompetition = async (req, res) => {
     await updateDoc(doc(Missions, missionId), {
       competitionId,
     });
-    // await updateDoc(doc(Competitions, id), {
-    //   missions: [...competitionDoc.data().missions, missionId],
-    // });
 
     responseHandler.ok(res, { message: "Mission added to competition" });
   } catch (error) {
