@@ -33,4 +33,10 @@ router.post(
 
 router.get("/profile", tokenMiddleware.auth, usersController.getProfile);
 
+router.put(
+  "/update-to-admin/:id",
+  tokenMiddleware.auth,
+  usersController.updateUserToAdmin
+);
+
 export default router;

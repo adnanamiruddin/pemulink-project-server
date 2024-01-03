@@ -91,6 +91,24 @@ const getProfile = async (req, res) => {
   }
 };
 
+const updateUserToAdmin = async (req, res) => {
+  try {
+    const { role } = req.user.data;
+    if (role !== "super-admin") return responseHandler.forbidden(res);
+
+    const { id } = req.params;
+
+    const userDoc = await getDoc(doc(Users, id));
+    if (!userDoc.exists()) return responseHandler.notFound(res);
+
+    await updateDoc(doc(Users, id), { role: "admin" });
+
+    responseHandler.ok(res, { message: "User updated successfully" });
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 // Delay
 // const changePassword = async (req, res) => {
 //   try {
@@ -106,4 +124,4 @@ const getProfile = async (req, res) => {
 //   }
 // };
 
-export default { signUp, signIn, getProfile };
+export default { signUp, signIn, getProfile, updateUserToAdmin };
