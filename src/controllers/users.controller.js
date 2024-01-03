@@ -106,4 +106,4 @@ const getProfile = async (req, res) => {
 //   }
 // };
 
-export default { signUp, signIn, getProfile, updateUserToAdmin };
+export default { signUp, signIn, getProfile };
