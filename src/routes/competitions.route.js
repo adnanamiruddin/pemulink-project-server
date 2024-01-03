@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import requsetHandler from "../handlers/request.handler.js";
 import tokenMiddleware from "../middlewares/token.middleware.js";
 import competitionsController from "../controllers/competitions.controller.js";
+import teamsRoute from "./teams.route.js";
 
 const router = express.Router();
 
@@ -52,5 +53,7 @@ router.put(
   tokenMiddleware.auth,
   competitionsController.addMissionToCompetition
 );
+
+router.use("/:competitionId/team", teamsRoute);
 
 export default router;
