@@ -10,14 +10,12 @@ import {
 import { Competitions, Teams } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import { formatDate } from "../helpers/helper.js";
+import Team from "../models/Team.js";
 
 const createTeam = async (req, res) => {
   try {
     const { role } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
-
-    const { id } = req.user;
-    // const dataReq = req.body;
 
     const { competitionId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
@@ -48,20 +46,16 @@ const createTeam = async (req, res) => {
     //     "Team already exists. Please try again"
     //   );
 
-    dataReq.competitionId = competitionId;
-    dataReq.code = teamCode;
-    dataReq.members = [id];
+    const { id } = req.user;
+    const { name, description } = req.body;
 
-    dataReq.createdAt = new Date();
-    dataReq.createdBy = id;
-    dataReq.updatedAt = new Date();
-    dataReq.updatedBy = id;
+    const team = new Team(name, description, competitionId, id);
 
-    const newTeam = await addDoc(Teams, dataReq);
+    const newTeam = await addDoc(Teams, team.toObject());
 
     responseHandler.created(res, {
       id: newTeam.id,
-      ...dataReq,
+      ...team,
       message: "Team created successfully",
     });
   } catch (error) {
@@ -74,10 +68,13 @@ const joinTeam = async (req, res) => {
     const { role } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
 
-    const { id } = req.user;
-
     const { competitionId } = req.params;
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const { id } = req.user;
     const { code } = req.body;
+
     const teamDoc = await getDoc(
       query(
         Teams,
@@ -87,7 +84,7 @@ const joinTeam = async (req, res) => {
     );
     if (!teamDoc.exists()) return responseHandler.notFound(res);
 
-    await updateDoc(doc(Teams, teamId), {
+    await updateDoc(doc(Teams, teamDoc.id), {
       members: [...teamDoc.data().members, id],
     });
 

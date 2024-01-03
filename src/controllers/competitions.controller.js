@@ -1,7 +1,6 @@
 import { addDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Competitions, Missions } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
-import { formatDate } from "../helpers/helper.js";
 import Competition from "../models/Competition.js";
 
 const createCompetition = async (req, res) => {
