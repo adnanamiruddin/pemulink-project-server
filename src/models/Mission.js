@@ -3,11 +3,11 @@ import { formatDate } from "../helpers/helper.js";
 class Mission {
   constructor(title, description, reward, status) {
     this.title = title;
-    this.description = description ? description : "";
-    this.reward = reward ? reward : 0;
+    this.description = description;
+    this.reward = reward;
+    this.status = status;
     this.startedAt = null;
     this.endAt = null;
-    this.status = status ? status : "pending";
     this.competitionId = null;
     this.createdAt = new Date();
     this.createdBy = null;

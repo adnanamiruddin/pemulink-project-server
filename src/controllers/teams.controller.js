@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { Competitions, Teams } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
-import { formatDate } from "../helper/helper.js";
+import { formatDate } from "../helpers/helper.js";
 
 const createTeam = async (req, res) => {
   try {

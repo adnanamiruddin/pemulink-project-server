@@ -15,14 +15,12 @@ const createMission = async (req, res) => {
   try {
     // Validate if user is admin
     const { role } = req.user.data;
-    if (role !== "admin" && role !== "super-admin") {
-      return responseHandler.forbidden(res);
-    }
+    if (role === "user") return responseHandler.forbidden(res);
 
     const { id } = req.user;
     const { title } = req.body;
 
-    const mission = new Mission(title);
+    const mission = new Mission(title, "", 0, "pending");
     mission.createdBy = id;
     mission.updatedBy = id;
 

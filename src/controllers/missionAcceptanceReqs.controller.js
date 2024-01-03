@@ -39,11 +39,21 @@ const createMissionAcceptanceReq = async (req, res) => {
     if (!missionAcceptanceReqsnap.empty)
       return responseHandler.badRequest(res, "Mission already requested");
 
-    const missionAcceptanceReq = new MissionAcceptanceReq(userId, missionId);
+    const missionAcceptanceReq = new MissionAcceptanceReq(
+      userId,
+      missionId,
+      "pending"
+    );
 
-    await addDoc(MissionAcceptanceRequests, missionAcceptanceReq.toObject());
+    const newCompetition = await addDoc(
+      MissionAcceptanceRequests,
+      missionAcceptanceReq.toObject()
+    );
 
-    responseHandler.created(res, missionAcceptanceReq);
+    responseHandler.created(res, {
+      id: newCompetition.id,
+      ...missionAcceptanceReq,
+    });
   } catch (error) {
     responseHandler.error(res);
   }

@@ -1,7 +1,8 @@
 import { addDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Competitions, Missions } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
-import { formatDate } from "../helper/helper.js";
+import { formatDate } from "../helpers/helper.js";
+import Competition from "../models/Competition.js";
 
 const createCompetition = async (req, res) => {
   try {
@@ -9,20 +10,15 @@ const createCompetition = async (req, res) => {
     if (role !== "super-admin") return responseHandler.forbidden(res);
 
     const { id } = req.user;
-    const dataReq = req.body;
+    const { name, description } = req.body;
 
-    dataReq.startedAt = null;
-    dataReq.endAt = null;
-    dataReq.status = "pending";
+    const competition = new Competition(name, description, "pending");
+    competition.createdBy = id;
+    competition.updatedBy = id;
 
-    dataReq.createdAt = new Date();
-    dataReq.createdBy = id;
-    dataReq.updatedAt = new Date();
-    dataReq.updatedBy = id;
+    const newCompetition = await addDoc(Competitions, competition.toObject());
 
-    const newCompetition = await addDoc(Competitions, dataReq);
-
-    responseHandler.created(res, { id: newCompetition.id, ...dataReq });
+    responseHandler.created(res, { id: newCompetition.id, ...competition });
   } catch (error) {
     responseHandler.error(res);
   }
@@ -34,20 +30,7 @@ const getAllCompetitions = async (req, res) => {
     const competitions = [];
 
     querySnapshot.forEach((doc) => {
-      const competitionData = doc.data();
-      const formattedCompetition = {
-        id: doc.id,
-        ...competitionData,
-        createdAt: formatDate(competitionData.createdAt),
-        updatedAt: formatDate(competitionData.updatedAt),
-        startedAt:
-          missionData.startedAt !== null
-            ? formatDate(missionData.startedAt)
-            : null,
-        endAt:
-          missionData.endAt !== null ? formatDate(missionData.endAt) : null,
-      };
-      competitions.push(formattedCompetition);
+      competitions.push(Competition.toFormattedObject(doc));
     });
 
     responseHandler.ok(res, competitions);
@@ -63,20 +46,7 @@ const getCompetitionById = async (req, res) => {
     const competitionDoc = await getDoc(doc(Competitions, id));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    const competitionData = competitionDoc.data();
-    const formattedCompetition = {
-      id: competitionDoc.id,
-      ...competitionData,
-      createdAt: formatDate(competitionData.createdAt),
-      updatedAt: formatDate(competitionData.updatedAt),
-      startedAt:
-        missionData.startedAt !== null
-          ? formatDate(missionData.startedAt)
-          : null,
-      endAt: missionData.endAt !== null ? formatDate(missionData.endAt) : null,
-    };
-
-    responseHandler.ok(res, formattedCompetition);
+    responseHandler.ok(res, Competition.toFormattedObject(competitionDoc));
   } catch (error) {
     responseHandler.error(res);
   }
@@ -89,10 +59,11 @@ const updateCompetition = async (req, res) => {
     if (role !== "super-admin") return responseHandler.forbidden(res);
 
     const dataReq = req.body;
-    dataReq.updatedAt = new Date();
 
     const competitionDoc = await getDoc(doc(Competitions, id));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    dataReq.updatedAt = new Date();
 
     await updateDoc(doc(Competitions, id), dataReq);
 
