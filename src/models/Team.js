@@ -30,7 +30,7 @@ class Team {
     while (!isCodeUnique && attemptCount < 10) {
       const randomCode = Math.random()
         .toString(36)
-        .substring(2, 6)
+        .substring(2, 3)
         .toUpperCase();
       teamCode = baseCode + randomCode;
       // Check if the team code is unique

@@ -21,31 +21,6 @@ const createTeam = async (req, res) => {
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    // // Get the first 3 characters of the competition name
-    // const competitionName = competitionDoc.data().name;
-    // const middleIndex = Math.floor(competitionName.length / 2);
-    // const competitionCode =
-    //   competitionName.slice(0, 1) +
-    //   (competitionName.charAt(middleIndex) === " "
-    //     ? "P"
-    //     : competitionName.charAt(middleIndex)) +
-    //   competitionName.slice(-1);
-
-    // // Create 4 characters in the form of uppercase letters and a unique random number
-    // const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-
-    // const teamCode = competitionCode + randomCode;
-
-    // // Validate teamCode must unique
-    // const teamDoc = await getDoc(
-    //   query(Teams, where("competitionId", "==", competitionId))
-    // );
-    // if (teamDoc.exists())
-    //   return responseHandler.badRequest(
-    //     res,
-    //     "Team already exists. Please try again"
-    //   );
-
     const { id } = req.user;
     const { name, description } = req.body;
 

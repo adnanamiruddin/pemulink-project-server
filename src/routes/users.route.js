@@ -14,6 +14,15 @@ router.post(
     body("password")
       .isLength({ min: 8 })
       .withMessage("Password must be at least 8 characters"),
+    body("confirmPassword")
+      .isLength({ min: 8 })
+      .withMessage("Confirm password must be at least 8 characters")
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Confirm password does not match password");
+        }
+        return true;
+      }),
   ],
   requsetHandler.validate,
   usersController.signUp
@@ -32,6 +41,24 @@ router.post(
 );
 
 router.get("/profile", tokenMiddleware.auth, usersController.getProfile);
+
+router.put(
+  "/update-profile",
+  tokenMiddleware.auth,
+  [
+    body("email").isEmail().withMessage("Email is invalid"),
+    body("fullName").notEmpty().withMessage("Full name is required"),
+    body("age")
+      .notEmpty()
+      .withMessage("Age is required")
+      .isInt()
+      .withMessage("Age must be a number"),
+    body("city").notEmpty().withMessage("City is required"),
+    body("address").notEmpty().withMessage("Address is required"),
+  ],
+  requsetHandler.validate,
+  usersController.updateProfile
+);
 
 router.put(
   "/update-to-admin/:id",

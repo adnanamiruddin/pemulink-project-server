@@ -91,6 +91,25 @@ const getProfile = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const dataReq = req.body;
+
+    const docRef = doc(Users, id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return responseHandler.notFound(res);
+
+    if (dataReq.role === "user") dataReq.isMembershipOn = true;
+
+    await updateDoc(docRef, dataReq);
+
+    responseHandler.ok(res, { message: "User updated successfully" });
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 const updateUserToAdmin = async (req, res) => {
   try {
     const { role } = req.user.data;
@@ -98,10 +117,11 @@ const updateUserToAdmin = async (req, res) => {
 
     const { id } = req.params;
 
-    const userDoc = await getDoc(doc(Users, id));
-    if (!userDoc.exists()) return responseHandler.notFound(res);
+    const docRef = doc(Users, id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return responseHandler.notFound(res);
 
-    await updateDoc(doc(Users, id), { role: "admin" });
+    await updateDoc(docRef, { role: "admin" });
 
     responseHandler.ok(res, { message: "User updated successfully" });
   } catch (error) {
@@ -124,4 +144,4 @@ const updateUserToAdmin = async (req, res) => {
 //   }
 // };
 
-export default { signUp, signIn, getProfile, updateUserToAdmin };
+export default { signUp, signIn, getProfile, updateProfile, updateUserToAdmin };
