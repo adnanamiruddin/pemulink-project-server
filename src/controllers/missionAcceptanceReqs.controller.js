@@ -21,8 +21,9 @@ const createMissionAcceptanceReq = async (req, res) => {
     if (role !== "user") return responseHandler.forbidden(res);
 
     const { id: userId } = req.user;
-    const { missionId } = req.params;
-    const { photoEvidence } = req.body;
+    const { id: missionId } = req.params;
+    const { photoEvidenceURL } = req.body;
+    console.log(missionId, photoEvidenceURL);
 
     const docSnap = await getDoc(doc(Missions, missionId));
     if (!docSnap.exists()) return responseHandler.notFound(res);
@@ -43,7 +44,7 @@ const createMissionAcceptanceReq = async (req, res) => {
     const missionAcceptanceReq = new MissionAcceptanceReq(
       userId,
       missionId,
-      photoEvidence,
+      photoEvidenceURL,
       "pending"
     );
 

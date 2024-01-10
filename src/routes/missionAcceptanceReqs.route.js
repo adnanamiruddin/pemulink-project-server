@@ -7,8 +7,9 @@ import missionAcceptanceReqs from "../controllers/missionAcceptanceReqs.controll
 const router = express.Router();
 
 router.post(
-  "/:missionId",
-  [body("photoEvidence").notEmpty().withMessage("Photo evidence is required")],
+  // missionId is passed as a parameter
+  "/:id",
+  [body("photoEvidenceURL").notEmpty().withMessage("Photo evidence is required")],
   tokenMiddleware.auth,
   missionAcceptanceReqs.createMissionAcceptanceReq
 );

@@ -1,10 +1,10 @@
 import { formatDate } from "../helpers/helper.js";
 
 class MissionAcceptanceReq {
-  constructor(userId, missionId, photoEvidence, status) {
+  constructor(userId, missionId, photoEvidenceURL, status) {
     this.userId = userId;
     this.missionId = missionId;
-    this.photoEvidence = photoEvidence;
+    this.photoEvidenceURL = photoEvidenceURL;
     this.status = status;
     this.createdAt = new Date();
     this.updatedAt = new Date();
@@ -15,7 +15,7 @@ class MissionAcceptanceReq {
     return {
       userId: this.userId,
       missionId: this.missionId,
-      photoEvidence: this.photoEvidence,
+      photoEvidenceURL: this.photoEvidenceURL,
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
@@ -28,7 +28,7 @@ class MissionAcceptanceReq {
     const missionAcceptanceReq = new MissionAcceptanceReq(
       data.userId,
       data.missionId,
-      data.photoEvidence,
+      data.photoEvidenceURL,
       data.status
     );
     missionAcceptanceReq.id = doc.id;
