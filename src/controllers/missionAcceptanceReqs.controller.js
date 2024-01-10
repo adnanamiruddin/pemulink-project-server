@@ -22,6 +22,7 @@ const createMissionAcceptanceReq = async (req, res) => {
 
     const { id: userId } = req.user;
     const { missionId } = req.params;
+    const { photoEvidence } = req.body;
 
     const docSnap = await getDoc(doc(Missions, missionId));
     if (!docSnap.exists()) return responseHandler.notFound(res);
@@ -42,6 +43,7 @@ const createMissionAcceptanceReq = async (req, res) => {
     const missionAcceptanceReq = new MissionAcceptanceReq(
       userId,
       missionId,
+      photoEvidence,
       "pending"
     );
 

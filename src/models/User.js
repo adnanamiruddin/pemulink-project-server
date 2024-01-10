@@ -7,6 +7,7 @@ class User {
     this.age = null;
     this.city = null;
     this.address = null;
+    this.phoneNumber = null;
     this.role = "user";
     this.isMembershipOn = false;
     this.xp = 0;
@@ -22,6 +23,7 @@ class User {
       age: this.age,
       city: this.city,
       address: this.address,
+      phoneNumber: this.phoneNumber,
       role: this.role,
       isMembershipOn: this.isMembershipOn,
       xp: this.xp,
@@ -38,6 +40,7 @@ class User {
     user.age = data.age;
     user.city = data.city;
     user.address = data.address;
+    user.phoneNumber = data.phoneNumber;
     user.role = data.role;
     user.isMembershipOn = data.isMembershipOn;
     user.xp = data.xp;

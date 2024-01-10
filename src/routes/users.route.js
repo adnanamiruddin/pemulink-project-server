@@ -43,7 +43,7 @@ router.post(
 router.get("/profile", tokenMiddleware.auth, usersController.getProfile);
 
 router.put(
-  "/update-profile",
+  "/profile",
   tokenMiddleware.auth,
   [
     body("email").isEmail().withMessage("Email is invalid"),
@@ -55,6 +55,11 @@ router.put(
       .withMessage("Age must be a number"),
     body("city").notEmpty().withMessage("City is required"),
     body("address").notEmpty().withMessage("Address is required"),
+    body("phoneNumber")
+      .notEmpty()
+      .withMessage("Phone number is required")
+      .isMobilePhone()
+      .withMessage("Phone number is invalid"),
   ],
   requsetHandler.validate,
   usersController.updateProfile

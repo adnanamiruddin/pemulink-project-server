@@ -1,5 +1,5 @@
 import { Users } from "../config/config.js";
-import { getDocs, doc, getDoc, query, where, addDoc } from "firebase/firestore";
+import { getDocs, doc, getDoc, query, where, addDoc, updateDoc } from "firebase/firestore";
 import bcrypt from "bcrypt";
 import responseHandler from "../handlers/response.handler.js";
 import jsonwebtoken from "jsonwebtoken";
@@ -106,6 +106,7 @@ const updateProfile = async (req, res) => {
 
     responseHandler.ok(res, { message: "User updated successfully" });
   } catch (error) {
+    console.log(error);
     responseHandler.error(res);
   }
 };

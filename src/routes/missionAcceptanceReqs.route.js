@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post(
   "/:missionId",
+  [body("photoEvidence").notEmpty().withMessage("Photo evidence is required")],
   tokenMiddleware.auth,
   missionAcceptanceReqs.createMissionAcceptanceReq
 );
