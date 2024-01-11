@@ -1,10 +1,10 @@
 import { formatDate } from "../helpers/helper.js";
 
 class User {
-  constructor(userUID, fullName) {
-    // this.email = email;
+  constructor(userUID, firstName, lastName) {
     this.userUID = userUID;
-    this.fullName = fullName;
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.age = null;
     this.city = null;
     this.address = null;
@@ -13,15 +13,14 @@ class User {
     this.isMembershipOn = false;
     this.xp = 0;
     this.balance = 0;
-    // this.password = password;
     this.createdAt = new Date();
   }
 
   toObject() {
     return {
-      // email: this.email,
       userUID: this.userUID,
-      fullName: this.fullName,
+      firstName: this.firstName,
+      lastName: this.lastName,
       age: this.age,
       city: this.city,
       address: this.address,
@@ -30,14 +29,13 @@ class User {
       isMembershipOn: this.isMembershipOn,
       xp: this.xp,
       balance: this.balance,
-      // password: this.password,
       createdAt: this.createdAt,
     };
   }
 
   static getProfile(doc) {
     const data = doc.data();
-    const user = new User(data.userUID, data.fullName);
+    const user = new User(data.userUID, data.firstName);
     user.id = doc.id;
     user.age = data.age;
     user.city = data.city;

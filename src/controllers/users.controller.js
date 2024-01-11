@@ -14,10 +14,9 @@ import User from "../models/User.js";
 
 const signUp = async (req, res) => {
   try {
-    console.log(req.user);
-    const { userUID, fullName } = req.body;
+    const { userUID, firstName, lastName } = req.body;
 
-    const user = new User(userUID, fullName);
+    const user = new User(userUID, firstName, lastName);
     // Save additional user data
     const docRef = await addDoc(Users, user.toObject());
 
