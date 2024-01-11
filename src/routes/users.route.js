@@ -9,24 +9,34 @@ const router = express.Router();
 router.post(
   "/sign-up",
   [
-    body("email").isEmail().withMessage("Email is invalid"),
+    body("userUID").notEmpty().withMessage("User UID is required"),
     body("fullName").notEmpty().withMessage("Full name is required"),
-    body("password")
-      .isLength({ min: 8 })
-      .withMessage("Password must be at least 8 characters"),
-    body("confirmPassword")
-      .isLength({ min: 8 })
-      .withMessage("Confirm password must be at least 8 characters")
-      .custom((value, { req }) => {
-        if (value !== req.body.password) {
-          throw new Error("Confirm password does not match password");
-        }
-        return true;
-      }),
   ],
   requsetHandler.validate,
   usersController.signUp
 );
+
+// router.post(
+//   "/sign-up",
+//   [
+//     body("email").isEmail().withMessage("Email is invalid"),
+//     body("fullName").notEmpty().withMessage("Full name is required"),
+//     body("password")
+//       .isLength({ min: 8 })
+//       .withMessage("Password must be at least 8 characters"),
+//     body("confirmPassword")
+//       .isLength({ min: 8 })
+//       .withMessage("Confirm password must be at least 8 characters")
+//       .custom((value, { req }) => {
+//         if (value !== req.body.password) {
+//           throw new Error("Confirm password does not match password");
+//         }
+//         return true;
+//       }),
+//   ],
+//   requsetHandler.validate,
+//   usersController.signUp
+// );
 
 router.post(
   "/sign-in",

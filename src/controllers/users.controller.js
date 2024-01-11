@@ -1,5 +1,13 @@
 import { Users } from "../config/config.js";
-import { getDocs, doc, getDoc, query, where, addDoc, updateDoc } from "firebase/firestore";
+import {
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+} from "firebase/firestore";
 import bcrypt from "bcrypt";
 import responseHandler from "../handlers/response.handler.js";
 import jsonwebtoken from "jsonwebtoken";
@@ -13,17 +21,10 @@ const isEmailUnique = async (email) => {
 
 const signUp = async (req, res) => {
   try {
-    const dataReq = req.body;
+    console.log(req.user);
+    const { userUID, fullName } = req.body;
 
-    const isUnique = await isEmailUnique(dataReq.email);
-    if (!isUnique) return responseHandler.badRequest(res, "Email already used");
-
-    // Hashing password
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(dataReq.password, salt);
-    dataReq.password = hashedPassword;
-
-    const user = new User(dataReq.email, dataReq.fullName, dataReq.password);
+    const user = new User(userUID, fullName);
 
     // Save additional user data
     const docRef = await addDoc(Users, user.toObject());
@@ -47,6 +48,42 @@ const signUp = async (req, res) => {
     responseHandler.error(res);
   }
 };
+
+// const signUp = async (req, res) => {
+//   try {
+//     const dataReq = req.body;
+
+//     const isUnique = await isEmailUnique(dataReq.email);
+//     if (!isUnique) return responseHandler.badRequest(res, "Email already used");
+
+//     // Hashing password
+//     const salt = bcrypt.genSaltSync(10);
+//     const hashedPassword = bcrypt.hashSync(dataReq.password, salt);
+//     dataReq.password = hashedPassword;
+
+//     const user = new User(dataReq.email, dataReq.fullName, dataReq.password);
+
+//     // Save additional user data
+//     const docRef = await addDoc(Users, user.toObject());
+
+//     user.password = undefined;
+//     const token = jsonwebtoken.sign(
+//       { data: docRef.id },
+//       process.env.SECRET_TOKEN,
+//       { expiresIn: "24h" }
+//     );
+
+//     responseHandler.created(res, {
+//       id: docRef.id,
+//       ...user,
+//       token,
+//       message:
+//         "User added successfully. Please complete your profile information.",
+//     });
+//   } catch (error) {
+//     responseHandler.error(res);
+//   }
+// };
 
 const signIn = async (req, res) => {
   try {
