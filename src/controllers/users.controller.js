@@ -8,16 +8,9 @@ import {
   addDoc,
   updateDoc,
 } from "firebase/firestore";
-import bcrypt from "bcrypt";
 import responseHandler from "../handlers/response.handler.js";
 import jsonwebtoken from "jsonwebtoken";
 import User from "../models/User.js";
-
-const isEmailUnique = async (email) => {
-  const q = query(Users, where("email", "==", email));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.size === 0;
-};
 
 const signUp = async (req, res) => {
   try {
@@ -25,7 +18,6 @@ const signUp = async (req, res) => {
     const { userUID, fullName } = req.body;
 
     const user = new User(userUID, fullName);
-
     // Save additional user data
     const docRef = await addDoc(Users, user.toObject());
 
@@ -49,56 +41,16 @@ const signUp = async (req, res) => {
   }
 };
 
-// const signUp = async (req, res) => {
-//   try {
-//     const dataReq = req.body;
-
-//     const isUnique = await isEmailUnique(dataReq.email);
-//     if (!isUnique) return responseHandler.badRequest(res, "Email already used");
-
-//     // Hashing password
-//     const salt = bcrypt.genSaltSync(10);
-//     const hashedPassword = bcrypt.hashSync(dataReq.password, salt);
-//     dataReq.password = hashedPassword;
-
-//     const user = new User(dataReq.email, dataReq.fullName, dataReq.password);
-
-//     // Save additional user data
-//     const docRef = await addDoc(Users, user.toObject());
-
-//     user.password = undefined;
-//     const token = jsonwebtoken.sign(
-//       { data: docRef.id },
-//       process.env.SECRET_TOKEN,
-//       { expiresIn: "24h" }
-//     );
-
-//     responseHandler.created(res, {
-//       id: docRef.id,
-//       ...user,
-//       token,
-//       message:
-//         "User added successfully. Please complete your profile information.",
-//     });
-//   } catch (error) {
-//     responseHandler.error(res);
-//   }
-// };
-
 const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { userUID } = req.body;
 
-    const q = query(Users, where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    if (querySnapshot.size === 0)
-      return responseHandler.unauthorize(res, "Invalid email or password");
+    const querySnapshot = await getDocs(
+      query(Users, where("userUID", "==", userUID))
+    );
+    if (querySnapshot.size === 0) return responseHandler.unauthorize(res);
 
     const user = querySnapshot.docs[0].data();
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
-    if (!isPasswordValid)
-      return responseHandler.unauthorize(res, "Invalid email or password");
-
     user.password = undefined;
     const token = jsonwebtoken.sign(
       { data: querySnapshot.docs[0].id },

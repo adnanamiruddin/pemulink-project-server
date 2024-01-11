@@ -40,12 +40,7 @@ router.post(
 
 router.post(
   "/sign-in",
-  [
-    body("email").isEmail().withMessage("Email is invalid"),
-    body("password")
-      .isLength({ min: 8 })
-      .withMessage("Password must be at least 8 characters"),
-  ],
+  [body("userUID").notEmpty().withMessage("User UID is required")],
   requsetHandler.validate,
   usersController.signIn
 );
