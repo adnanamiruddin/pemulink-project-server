@@ -12,7 +12,7 @@ class User {
     this.role = "user";
     this.isMembershipOn = false;
     this.xp = 0;
-    this.balance = 0;
+    this.point = 0;
     this.createdAt = new Date();
   }
 
@@ -28,14 +28,14 @@ class User {
       role: this.role,
       isMembershipOn: this.isMembershipOn,
       xp: this.xp,
-      balance: this.balance,
+      point: this.point,
       createdAt: this.createdAt,
     };
   }
 
   static getProfile(doc) {
     const data = doc.data();
-    const user = new User(data.userUID, data.firstName);
+    const user = new User(data.userUID, data.firstName, data.lastName);
     user.id = doc.id;
     user.age = data.age;
     user.city = data.city;
@@ -44,7 +44,7 @@ class User {
     user.role = data.role;
     user.isMembershipOn = data.isMembershipOn;
     user.xp = data.xp;
-    user.balance = data.balance;
+    user.point = data.point;
     user.password = undefined;
     user.createdAt = formatDate(data.createdAt);
     return user;

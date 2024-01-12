@@ -1,11 +1,13 @@
 import { formatDate } from "../helpers/helper.js";
 
 class Mission {
-  constructor(title, description, reward, status) {
+  constructor(title, description, pointReward, xpReward, status) {
     this.title = title;
     this.description = description;
-    this.reward = reward;
+    this.pointReward = pointReward;
+    this.xpReward = xpReward;
     this.status = status;
+    this.imageURL = null;
     this.startedAt = null;
     this.endAt = null;
     this.competitionId = null;
@@ -19,10 +21,12 @@ class Mission {
     return {
       title: this.title,
       description: this.description,
-      reward: this.reward,
+      pointReward: this.pointReward,
+      xpReward: this.xpReward,
       startedAt: this.startedAt,
       endAt: this.endAt,
       status: this.status,
+      imageURL: this.imageURL,
       competitionId: this.competitionId,
       createdAt: this.createdAt,
       createdBy: this.createdBy,
@@ -36,10 +40,12 @@ class Mission {
     const mission = new Mission(
       data.title,
       data.description,
-      data.reward,
+      data.pointReward,
+      data.xpReward,
       data.status
     );
     mission.id = doc.id;
+    mission.imageURL = data.imageURL;
     mission.startedAt = data.startedAt;
     mission.endAt = data.endAt;
     mission.competitionId = data.competitionId;

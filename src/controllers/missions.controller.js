@@ -20,7 +20,7 @@ const createMission = async (req, res) => {
     const { id } = req.user;
     const { title } = req.body;
 
-    const mission = new Mission(title, "", 0, "pending");
+    const mission = new Mission(title, "", 0, 0, "pending");
     mission.createdBy = id;
     mission.updatedBy = id;
 

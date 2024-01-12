@@ -23,16 +23,22 @@ router.put(
   [
     body("title").notEmpty().withMessage("Title is required"),
     body("description").notEmpty().withMessage("Description is required"),
-    body("reward")
+    body("pointReward")
       .notEmpty()
-      .withMessage("Reward is required")
+      .withMessage("Point reward is required")
       .isInt()
-      .withMessage("Reward must be a number"),
+      .withMessage("Point reward must be a number"),
+    body("xpReward")
+      .notEmpty()
+      .withMessage("XP reward is required")
+      .isInt()
+      .withMessage("XP reward must be a number"),
     body("status")
       .notEmpty()
       .withMessage("Status is required")
       .isIn(["pending", "started", "completed"])
       .withMessage("Invalid status"),
+    body("imageURL").optional(),
   ],
   requsetHandler.validate,
   tokenMiddleware.auth,
