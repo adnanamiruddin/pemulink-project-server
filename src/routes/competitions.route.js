@@ -62,16 +62,16 @@ router.delete(
   competitionsController.deleteCompetition
 );
 
+router.get(
+  "/:id/missions",
+  tokenMiddleware.auth,
+  competitionsController.getAllMissionsByCompetitionId
+);
+
 router.put(
   "/:competitionId/mission/:missionId",
   tokenMiddleware.auth,
   competitionsController.addMissionToCompetition
-);
-
-router.get(
-  "/:competitionId/missions",
-  tokenMiddleware.auth,
-  competitionsController.getAllMissionsByCompetitionId
 );
 
 router.use("/:competitionId/team", teamsRoute);

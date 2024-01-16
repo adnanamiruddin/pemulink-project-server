@@ -125,7 +125,6 @@ const updateUserToAdmin = async (req, res) => {
 
 //     responseHandler.ok(res, "Password updated successfully");
 //   } catch (error) {
-//     console.error(error);
 //     responseHandler.error(res);
 //   }
 // };

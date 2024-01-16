@@ -1,4 +1,4 @@
-import { addDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { Competitions, Missions } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import Competition from "../models/Competition.js";
@@ -91,6 +91,28 @@ const deleteCompetition = async (req, res) => {
   }
 };
 
+const getAllMissionsByCompetitionId = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const competitionDoc = await getDoc(doc(Competitions, id));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const querySnapshot = await getDocs(
+      query(Missions, where("competitionId", "==", id))
+    );
+
+    const missions = [];
+    querySnapshot.forEach((doc) => {
+      missions.push(Mission.toFormattedObject(doc));
+    });
+
+    responseHandler.ok(res, missions);
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 const addMissionToCompetition = async (req, res) => {
   try {
     const { role } = req.user.data;
@@ -112,28 +134,6 @@ const addMissionToCompetition = async (req, res) => {
     // });
 
     responseHandler.ok(res, { message: "Mission added to competition" });
-  } catch (error) {
-    responseHandler.error(res);
-  }
-};
-
-const getAllMissionsByCompetitionId = async (req, res) => {
-  try {
-    const { competitionId: id } = req.params;
-
-    const competitionDoc = await getDoc(doc(Competitions, id));
-    if (!competitionDoc.exists()) return responseHandler.notFound(res);
-
-    const querySnapshot = await getDocs(
-      query(Missions, where("competitionId", "==", id))
-    );
-
-    const missions = [];
-    querySnapshot.forEach((doc) => {
-      missions.push(Mission.toFormattedObject(doc));
-    });
-
-    responseHandler.ok(res, missions);
   } catch (error) {
     responseHandler.error(res);
   }

@@ -4,6 +4,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -35,8 +36,11 @@ const createMission = async (req, res) => {
 const getAllWeeklyMissions = async (req, res) => {
   try {
     const querySnapshot = await getDocs(
-      Missions,
-      where("competitionId", "==", null)
+      query(
+        Missions,
+        where("competitionId", "==", null),
+        where("status", "==", "started")
+      )
     );
 
     const missions = [];
