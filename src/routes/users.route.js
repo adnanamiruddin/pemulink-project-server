@@ -30,8 +30,8 @@ router.put(
   "/profile",
   tokenMiddleware.auth,
   [
-    body("email").isEmail().withMessage("Email is invalid"),
-    body("fullName").notEmpty().withMessage("Full name is required"),
+    body("firstName").notEmpty().withMessage("First name is required"),
+    body("lastName").notEmpty().withMessage("Last name is required"),
     body("age")
       .notEmpty()
       .withMessage("Age is required")

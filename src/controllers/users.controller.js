@@ -86,7 +86,7 @@ const updateProfile = async (req, res) => {
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) return responseHandler.notFound(res);
 
-    if (dataReq.role === "user") dataReq.isMembershipOn = true;
+    dataReq.isMembershipOn = true;
 
     await updateDoc(docRef, dataReq);
 
