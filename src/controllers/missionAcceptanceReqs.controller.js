@@ -23,7 +23,6 @@ const createMissionAcceptanceReq = async (req, res) => {
     const { id: userId } = req.user;
     const { id: missionId } = req.params;
     const { photoEvidenceURL } = req.body;
-    console.log(missionId, photoEvidenceURL);
 
     const docSnap = await getDoc(doc(Missions, missionId));
     if (!docSnap.exists()) return responseHandler.notFound(res);

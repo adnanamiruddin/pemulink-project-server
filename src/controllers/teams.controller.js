@@ -22,9 +22,9 @@ const createTeam = async (req, res) => {
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
     const { id } = req.user;
-    const { name, description } = req.body;
+    const { name, avatarURL } = req.body;
 
-    const team = new Team(name, description, competitionId, id);
+    const team = new Team(name, avatarURL, competitionId, id);
 
     const newTeam = await addDoc(Teams, team.toObject());
 

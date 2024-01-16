@@ -35,7 +35,6 @@ const signUp = async (req, res) => {
         "User added successfully. Please complete your profile information.",
     });
   } catch (error) {
-    console.log(error);
     responseHandler.error(res);
   }
 };
@@ -74,7 +73,6 @@ const getProfile = async (req, res) => {
 
     responseHandler.ok(res, User.getProfile(docSnap));
   } catch (error) {
-    console.error(error);
     responseHandler.error(res);
   }
 };
@@ -94,7 +92,6 @@ const updateProfile = async (req, res) => {
 
     responseHandler.ok(res, { message: "User updated successfully" });
   } catch (error) {
-    console.log(error);
     responseHandler.error(res);
   }
 };
