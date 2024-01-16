@@ -2,6 +2,7 @@ import { addDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Competitions, Missions } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import Competition from "../models/Competition.js";
+import Mission from "../models/Mission.js";
 
 const createCompetition = async (req, res) => {
   try {
@@ -59,12 +60,13 @@ const updateCompetition = async (req, res) => {
     const { id } = req.params;
     const dataReq = req.body;
 
-    const competitionDoc = await getDoc(doc(Competitions, id));
+    const competitionRef = doc(Competitions, id);
+    const competitionDoc = await getDoc(competitionRef);
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
     dataReq.updatedAt = new Date();
 
-    await updateDoc(doc(Competitions, id), dataReq);
+    await updateDoc(competitionRef, dataReq);
 
     responseHandler.ok(res, { id, ...dataReq });
   } catch (error) {
@@ -115,6 +117,28 @@ const addMissionToCompetition = async (req, res) => {
   }
 };
 
+const getAllMissionsByCompetitionId = async (req, res) => {
+  try {
+    const { competitionId: id } = req.params;
+
+    const competitionDoc = await getDoc(doc(Competitions, id));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const querySnapshot = await getDocs(
+      query(Missions, where("competitionId", "==", id))
+    );
+
+    const missions = [];
+    querySnapshot.forEach((doc) => {
+      missions.push(Mission.toFormattedObject(doc));
+    });
+
+    responseHandler.ok(res, missions);
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 export default {
   createCompetition,
   getAllCompetitions,
@@ -122,4 +146,5 @@ export default {
   updateCompetition,
   deleteCompetition,
   addMissionToCompetition,
+  getAllMissionsByCompetitionId,
 };

@@ -35,7 +35,21 @@ router.put(
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("description").notEmpty().withMessage("Description is required"),
-    body("status").notEmpty().withMessage("Status is required"),
+    body("status")
+      .notEmpty()
+      .withMessage("Status is required")
+      .isIn(["pending", "started", "ended"])
+      .withMessage("Status must be one of pending, active, ended"),
+    body("startedAt")
+      .notEmpty()
+      .withMessage("Started at is required")
+      .isDate()
+      .withMessage("Started at must be a date"),
+    body("endAt")
+      .notEmpty()
+      .withMessage("End at is required")
+      .isDate()
+      .withMessage("End at must be a date"),
   ],
   requsetHandler.validate,
   tokenMiddleware.auth,
@@ -52,6 +66,12 @@ router.put(
   "/:competitionId/mission/:missionId",
   tokenMiddleware.auth,
   competitionsController.addMissionToCompetition
+);
+
+router.get(
+  "/:competitionId/missions",
+  tokenMiddleware.auth,
+  competitionsController.getAllMissionsByCompetitionId
 );
 
 router.use("/:competitionId/team", teamsRoute);
