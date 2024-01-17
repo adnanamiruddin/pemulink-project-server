@@ -1,4 +1,12 @@
-import { addDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import {
+  addDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { Competitions, Missions } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import Competition from "../models/Competition.js";
@@ -10,9 +18,9 @@ const createCompetition = async (req, res) => {
     if (role !== "super-admin") return responseHandler.forbidden(res);
 
     const { id } = req.user;
-    const { name, description } = req.body;
+    const { name, subTitle } = req.body;
 
-    const competition = new Competition(name, description, "pending");
+    const competition = new Competition(name, subTitle, "pending");
     competition.createdBy = id;
     competition.updatedBy = id;
 

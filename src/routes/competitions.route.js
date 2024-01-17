@@ -11,7 +11,7 @@ router.post(
   "/",
   [
     body("name").notEmpty().withMessage("Name is required"),
-    body("description").notEmpty().withMessage("Description is required"),
+    body("subTitle").notEmpty().withMessage("Subtitle is required"),
   ],
   requsetHandler.validate,
   tokenMiddleware.auth,
@@ -34,7 +34,7 @@ router.put(
   "/:id",
   [
     body("name").notEmpty().withMessage("Name is required"),
-    body("description").notEmpty().withMessage("Description is required"),
+    body("subTitle").notEmpty().withMessage("Subtitle is required"),
     body("status")
       .notEmpty()
       .withMessage("Status is required")
@@ -74,6 +74,6 @@ router.put(
   competitionsController.addMissionToCompetition
 );
 
-router.use("/:competitionId/team", teamsRoute);
+router.use("/:competitionId/teams", teamsRoute);
 
 export default router;

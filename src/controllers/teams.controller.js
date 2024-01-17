@@ -9,7 +9,6 @@ import {
 } from "firebase/firestore";
 import { Competitions, TeamMembers, Teams } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
-import { formatDate } from "../helpers/helper.js";
 import Team from "../models/Team.js";
 import TeamMember from "../models/TeamMember.js";
 
@@ -92,7 +91,7 @@ const chooseCharacter = async (req, res) => {
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    const { teamId } = req.params;
+    const { id: teamId } = req.params;
     const teamDoc = await getDoc(doc(Teams, teamId));
     if (!teamDoc.exists()) return responseHandler.notFound(res);
 
@@ -103,8 +102,7 @@ const chooseCharacter = async (req, res) => {
       query(
         TeamMembers,
         where("teamId", "==", teamId),
-        where("userId", "==", id),
-        where("competitionId", "==", competitionId)
+        where("userId", "==", id)
       )
     );
     if (!teamMemberDoc.exists()) return responseHandler.notFound(res);
@@ -118,7 +116,36 @@ const chooseCharacter = async (req, res) => {
   }
 };
 
+const getTeamDetailById = async (req, res) => {
+  try {
+    const { role } = req.user.data;
+    if (role !== "user") return responseHandler.forbidden(res);
 
+    const { competitionId } = req.params;
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const { id: teamId } = req.params;
+    const teamDoc = await getDoc(doc(Teams, teamId));
+    if (!teamDoc.exists()) return responseHandler.notFound(res);
+    const team = Team.toFormattedObject(teamDoc);
+
+    const teamMemberDoc = await getDocs(
+      query(TeamMembers, where("teamId", "==", teamId))
+    );
+    const teamMember = [];
+    teamMemberDoc.forEach((doc) => {
+      teamMember.push(TeamMember.toFormattedObject(doc));
+    });
+
+    responseHandler.ok(res, {
+      ...team,
+      ...teamMember,
+    });
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
 
 // const getAllTeams = async (req, res) => {
 //   try {
@@ -148,33 +175,10 @@ const chooseCharacter = async (req, res) => {
 //   }
 // };
 
-// const getTeamById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { role } = req.user.data;
-//     if (role !== "super-admin") return responseHandler.forbidden(res);
-
-//     const teamDoc = await getDoc(doc(Teams, id));
-//     if (!teamDoc.exists()) return responseHandler.notFound(res);
-
-//     const teamData = teamDoc.data();
-//     const formattedTeam = {
-//       id: doc.id,
-//       ...teamData,
-//       createdAt: formatDate(teamData.createdAt),
-//       updatedAt: formatDate(teamData.updatedAt),
-//     };
-
-//     responseHandler.ok(res, formattedTeam);
-//   } catch (error) {
-//     responseHandler.error(res);
-//   }
-// };
-
 export default {
   createTeam,
   joinTeam,
   chooseCharacter,
+  getTeamDetailById,
   // getAllTeams,
-  // getTeamById,
 };

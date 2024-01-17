@@ -1,9 +1,9 @@
 import { formatDate } from "../helpers/helper.js";
 
 class Competition {
-  constructor(name, description, status) {
+  constructor(name, subTitle, status) {
     this.name = name;
-    this.description = description;
+    this.subTitle = subTitle;
     this.status = status;
     this.startedAt = null;
     this.endAt = null;
@@ -16,7 +16,7 @@ class Competition {
   toObject() {
     return {
       name: this.name,
-      description: this.description,
+      subTitle: this.subTitle,
       status: this.status,
       startedAt: this.startedAt,
       endAt: this.endAt,
@@ -31,7 +31,7 @@ class Competition {
     const data = doc.data();
     const competition = new Competition(
       data.name,
-      data.description,
+      data.subTitle,
       data.status
     );
     competition.id = doc.id;

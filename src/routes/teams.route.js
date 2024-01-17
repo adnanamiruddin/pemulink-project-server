@@ -27,11 +27,15 @@ router.post(
 );
 
 router.put(
-  "/:teamId",
+  "/:id",
   [body("characterId").notEmpty().withMessage("Character id is required")],
   requsetHandler.validate,
   tokenMiddleware.auth,
   teamsController.chooseCharacter
 );
+
+router.get("/:id", tokenMiddleware.auth, teamsController.getTeamDetailById);
+
+// router.get("/", tokenMiddleware.auth, teamsController.getAllTeams);
 
 export default router;

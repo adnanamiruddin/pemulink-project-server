@@ -25,6 +25,7 @@ export const MissionAcceptanceRequests = collection(
 export const Competitions = collection(db, "competitions");
 export const Teams = collection(db, "teams");
 export const TeamMembers = collection(db, "team_members");
-// export connst 
+export const Avatars = collection(db, "avatars");
+export const AvatarCharacters = collection(db, "avatar_characters");
 
 // export const WasteBanks = collection(db, "waste_banks");
