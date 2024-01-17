@@ -11,7 +11,7 @@ router.post(
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("avatarId").notEmpty().withMessage("Avatar id is required"),
-    body("charactedId").notEmpty().withMessage("Character id is required"),
+    body("characterId").notEmpty().withMessage("Character id is required"),
   ],
   requsetHandler.validate,
   tokenMiddleware.auth,
@@ -24,6 +24,14 @@ router.post(
   requsetHandler.validate,
   tokenMiddleware.auth,
   teamsController.joinTeam
+);
+
+router.put(
+  "/:teamId",
+  [body("characterId").notEmpty().withMessage("Character id is required")],
+  requsetHandler.validate,
+  tokenMiddleware.auth,
+  teamsController.chooseCharacter
 );
 
 export default router;

@@ -33,7 +33,7 @@ const createTeam = async (req, res) => {
       id,
       characterId,
       "leader",
-      "pending"
+      "accepted"
     );
     await addDoc(TeamMembers, teamMember.toObject());
 
@@ -68,9 +68,14 @@ const joinTeam = async (req, res) => {
     );
     if (!teamDoc.exists()) return responseHandler.notFound(res);
 
-    await updateDoc(doc(Teams, teamDoc.id), {
-      members: [...teamDoc.data().members, id],
-    });
+    const newTeamMember = new TeamMember(
+      teamDoc.id,
+      id,
+      null,
+      "member",
+      "pending"
+    );
+    await addDoc(TeamMembers, newTeamMember.toObject());
 
     responseHandler.ok(res, { message: "Joined team successfully" });
   } catch (error) {
@@ -78,60 +83,63 @@ const joinTeam = async (req, res) => {
   }
 };
 
-const getAllTeams = async (req, res) => {
-  try {
-    const { competitionId } = req.params;
-    const { role } = req.user.data;
-    if (role !== "super-admin") return responseHandler.forbidden(res);
 
-    const querySnapshot = await getDocs(
-      query(Teams, where("competitionId", "==", competitionId))
-    );
-    const teams = [];
 
-    querySnapshot.forEach((doc) => {
-      const teamData = doc.data();
-      const formattedTeam = {
-        id: doc.id,
-        ...teamData,
-        createdAt: formatDate(teamData.createdAt),
-        updatedAt: formatDate(teamData.updatedAt),
-      };
-      teams.push(formattedTeam);
-    });
+// const getAllTeams = async (req, res) => {
+//   try {
+//     const { competitionId } = req.params;
+//     const { role } = req.user.data;
+//     if (role !== "super-admin") return responseHandler.forbidden(res);
 
-    responseHandler.ok(res, teams);
-  } catch (error) {
-    responseHandler.error(res);
-  }
-};
+//     const querySnapshot = await getDocs(
+//       query(Teams, where("competitionId", "==", competitionId))
+//     );
+//     const teams = [];
 
-const getTeamById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { role } = req.user.data;
-    if (role !== "super-admin") return responseHandler.forbidden(res);
+//     querySnapshot.forEach((doc) => {
+//       const teamData = doc.data();
+//       const formattedTeam = {
+//         id: doc.id,
+//         ...teamData,
+//         createdAt: formatDate(teamData.createdAt),
+//         updatedAt: formatDate(teamData.updatedAt),
+//       };
+//       teams.push(formattedTeam);
+//     });
 
-    const teamDoc = await getDoc(doc(Teams, id));
-    if (!teamDoc.exists()) return responseHandler.notFound(res);
+//     responseHandler.ok(res, teams);
+//   } catch (error) {
+//     responseHandler.error(res);
+//   }
+// };
 
-    const teamData = teamDoc.data();
-    const formattedTeam = {
-      id: doc.id,
-      ...teamData,
-      createdAt: formatDate(teamData.createdAt),
-      updatedAt: formatDate(teamData.updatedAt),
-    };
+// const getTeamById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { role } = req.user.data;
+//     if (role !== "super-admin") return responseHandler.forbidden(res);
 
-    responseHandler.ok(res, formattedTeam);
-  } catch (error) {
-    responseHandler.error(res);
-  }
-};
+//     const teamDoc = await getDoc(doc(Teams, id));
+//     if (!teamDoc.exists()) return responseHandler.notFound(res);
+
+//     const teamData = teamDoc.data();
+//     const formattedTeam = {
+//       id: doc.id,
+//       ...teamData,
+//       createdAt: formatDate(teamData.createdAt),
+//       updatedAt: formatDate(teamData.updatedAt),
+//     };
+
+//     responseHandler.ok(res, formattedTeam);
+//   } catch (error) {
+//     responseHandler.error(res);
+//   }
+// };
 
 export default {
   createTeam,
   joinTeam,
-  getAllTeams,
-  getTeamById,
+  chooseCharacter,
+  // getAllTeams,
+  // getTeamById,
 };
