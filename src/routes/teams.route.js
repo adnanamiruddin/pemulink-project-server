@@ -10,7 +10,7 @@ router.post(
   "/",
   [
     body("name").notEmpty().withMessage("Name is required"),
-    body("avatarURL").notEmpty().withMessage("Avatar is required"),
+    body("avatarId").notEmpty().withMessage("Avatar id is required"),
     body("userAvatarURL").notEmpty().withMessage("User Avatar is required"),
   ],
   requsetHandler.validate,

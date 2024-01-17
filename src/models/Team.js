@@ -3,9 +3,9 @@ import { Teams } from "../config/config.js";
 import { formatDate } from "../helpers/helper.js";
 
 class Team {
-  constructor(name, avatarURL, competitionId, leaderId) {
+  constructor(name, avatarId, competitionId, leaderId) {
     this.name = name;
-    this.avatarURL = avatarURL;
+    this.avatarId = avatarId;
     this.competitionId = competitionId;
     this.leaderId = leaderId;
     this.code = this.createTeamCode(name, competitionId);
@@ -51,7 +51,7 @@ class Team {
   toObject() {
     return {
       name: this.name,
-      avatarURL: this.avatarURL,
+      avatarId: this.avatarId,
       competitionId: this.competitionId,
       leaderId: this.leaderId,
       code: this.code,
@@ -64,7 +64,7 @@ class Team {
     const data = doc.data();
     const team = new Team(
       data.name,
-      data.avatarURL,
+      data.avatarId,
       data.competitionId,
       data.leaderId
     );
