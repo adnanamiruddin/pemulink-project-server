@@ -50,7 +50,7 @@ router.put(
 );
 
 router.get(
-  "/:competitionId/: ",
+  "/:competitionId",
   tokenMiddleware.auth,
   usersController.getUserTeam
 );

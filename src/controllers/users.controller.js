@@ -1,4 +1,4 @@
-import { Competitions, TeamMembers, Users } from "../config/config.js";
+import { Competitions, TeamMembers, Teams, Users } from "../config/config.js";
 import {
   getDocs,
   doc,
@@ -11,6 +11,8 @@ import {
 import responseHandler from "../handlers/response.handler.js";
 import jsonwebtoken from "jsonwebtoken";
 import User from "../models/User.js";
+import Team from "../models/Team.js";
+import TeamMember from "../models/TeamMember.js";
 
 const signUp = async (req, res) => {
   try {
@@ -98,20 +100,38 @@ const updateProfile = async (req, res) => {
 
 const getUserTeam = async (req, res) => {
   try {
-    const { role } = req.user.data;
+    const { role, teamMemberId } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
 
     const { id } = req.user;
-    const { competitionId, teamId } = req.params;
+    const { competitionId } = req.params;
 
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
     if (competitionDoc.data().status !== "started")
       return responseHandler.badRequest(res, "Kompetisi sudah berakhir");
 
-    
+    const teamMemberDoc = await getDoc(doc(TeamMembers, teamMemberId));
+    if (!teamMemberDoc.exists()) return responseHandler.notFound(res);
 
+    const teamDoc = await getDoc(doc(Teams, teamMemberDoc.data().teamId));
+    if (!teamDoc.exists()) return responseHandler.notFound(res);
+
+    const team = Team.toFormattedObject(teamDoc);
+    const teamMembers = [];
+    const querySnapshot = await getDocs(
+      query(TeamMembers, where("teamId", "==", teamDoc.id))
+    );
+    querySnapshot.forEach((doc) => {
+      teamMembers.push(TeamMember.toFormattedObject(doc));
+    });
+
+    responseHandler.ok(res, {
+      ...team,
+      teamMembers,
+    });
   } catch (error) {
+    console.log(error);
     responseHandler.error(res);
   }
 };
