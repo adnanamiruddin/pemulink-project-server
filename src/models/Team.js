@@ -7,9 +7,9 @@ class Team {
     this.name = name;
     this.avatarURL = avatarURL;
     this.competitionId = competitionId;
+    this.leaderId = leaderId;
     this.code = this.createTeamCode(name, competitionId);
     this.createdAt = new Date();
-    this.createdBy = leaderId;
     this.updatedAt = new Date();
   }
 
@@ -53,11 +53,10 @@ class Team {
       name: this.name,
       avatarURL: this.avatarURL,
       competitionId: this.competitionId,
+      leaderId: this.leaderId,
       code: this.code,
       createdAt: this.createdAt,
-      createdBy: this.createdBy,
       updatedAt: this.updatedAt,
-      updatedBy: this.updatedBy,
     };
   }
 
@@ -67,13 +66,11 @@ class Team {
       data.name,
       data.avatarURL,
       data.competitionId,
-      data.createdBy
+      data.leaderId
     );
     team.id = doc.id;
     team.createdAt = formatDate(data.createdAt);
-    team.createdBy = data.createdBy;
     team.updatedAt = formatDate(data.updatedAt);
-    team.updatedBy = data.updatedBy;
     return team;
   }
 }

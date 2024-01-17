@@ -7,10 +7,11 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Competitions, Teams } from "../config/config.js";
+import { Competitions, TeamMembers, Teams } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import { formatDate } from "../helpers/helper.js";
 import Team from "../models/Team.js";
+import TeamMember from "../models/TeamMember.js";
 
 const createTeam = async (req, res) => {
   try {
@@ -22,11 +23,19 @@ const createTeam = async (req, res) => {
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
     const { id } = req.user;
-    const { name, avatarURL } = req.body;
+    const { name, avatarURL, userAvatarURL } = req.body;
 
     const team = new Team(name, avatarURL, competitionId, id);
-
     const newTeam = await addDoc(Teams, team.toObject());
+
+    const teamMember = new TeamMember(
+      newTeam.id,
+      id,
+      userAvatarURL,
+      "leader",
+      "pending"
+    );
+    await addDoc(TeamMembers, teamMember.toObject());
 
     responseHandler.created(res, {
       id: newTeam.id,

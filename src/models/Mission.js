@@ -3,7 +3,7 @@ import { formatDate } from "../helpers/helper.js";
 class Mission {
   constructor(title, subTitle, description, pointReward, xpReward, status) {
     this.title = title;
-    this.subTitle = null;
+    this.subTitle = subTitle;
     this.description = description;
     this.pointReward = pointReward;
     this.xpReward = xpReward;
