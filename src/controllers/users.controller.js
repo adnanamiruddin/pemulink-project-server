@@ -1,4 +1,11 @@
-import { Competitions, TeamMembers, Teams, Users } from "../config/config.js";
+import {
+  AvatarCharacters,
+  Avatars,
+  Competitions,
+  TeamMembers,
+  Teams,
+  Users,
+} from "../config/config.js";
 import {
   getDocs,
   doc,
@@ -103,9 +110,7 @@ const getUserTeam = async (req, res) => {
     const { role, teamMemberId } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
 
-    const { id } = req.user;
     const { competitionId } = req.params;
-
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
     if (competitionDoc.data().status !== "started")
@@ -118,20 +123,45 @@ const getUserTeam = async (req, res) => {
     if (!teamDoc.exists()) return responseHandler.notFound(res);
 
     const team = Team.toFormattedObject(teamDoc);
+    const avatarDoc = await getDoc(doc(Avatars, team.avatarId));
+    const avatarData = avatarDoc.data();
+    team.avatarName = avatarData.name;
+    team.avatarURL = avatarData.avatarURL;
+
     const teamMembers = [];
     const querySnapshot = await getDocs(
       query(TeamMembers, where("teamId", "==", teamDoc.id))
     );
-    querySnapshot.forEach((doc) => {
-      teamMembers.push(TeamMember.toFormattedObject(doc));
-    });
+    // await Promise.all(
+    //   querySnapshot.docs.map(async (docData) => {
+    //     const teamMember = TeamMember.toFormattedObject(docData);
+    //     const characterDoc = await getDoc(
+    //       doc(AvatarCharacters, teamMember.characterId)
+    //     );
+    //     const characterData = characterDoc.data();
+    //     teamMember.characterName = characterData.name;
+    //     teamMember.characterURL = characterData.characterURL;
+    //     teamMembers.push(teamMember);
+    //   })
+    // );
+    for (const docData of querySnapshot.docs) {
+      const userDoc = await getDoc(doc(Users, docData.data().userId));
+      const user = userDoc.data();
+      const teamMember = TeamMember.toFormattedObject(docData);
+      const characterDoc = await getDoc(
+        doc(AvatarCharacters, teamMember.characterId)
+      );
+      const characterData = characterDoc.data();
+      teamMember.characterName = characterData.name;
+      teamMember.characterURL = characterData.characterURL;
+      teamMembers.push({ ...user, ...teamMember });
+    }
 
     responseHandler.ok(res, {
       ...team,
       teamMembers,
     });
   } catch (error) {
-    console.log(error);
     responseHandler.error(res);
   }
 };
