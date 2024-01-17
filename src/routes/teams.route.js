@@ -7,7 +7,7 @@ import teamsController from "../controllers/teams.controller.js";
 const router = express.Router();
 
 router.post(
-  "/",
+  "/:competitionId/",
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("avatarId").notEmpty().withMessage("Avatar id is required"),

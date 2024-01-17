@@ -24,8 +24,8 @@ const createTeam = async (req, res) => {
     const { id } = req.user;
     const { name, avatarId, characterId } = req.body;
 
-    const team = new Team(name, avatarId, competitionId, id);
-    const newTeam = await addDoc(Teams, team.toObject());
+    const team = await Team.create(name, avatarId, competitionId, id);
+    const newTeam = await addDoc(Teams, await team.toObject());
 
     const teamMember = new TeamMember(
       newTeam.id,

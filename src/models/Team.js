@@ -1,20 +1,26 @@
-import { getDoc, query, where } from "@firebase/firestore";
-import { Teams } from "../config/config.js";
+import { getDoc, getDocs, doc, query, where } from "@firebase/firestore";
+import { Competitions, Teams } from "../config/config.js";
 import { formatDate } from "../helpers/helper.js";
 
 class Team {
-  constructor(name, avatarId, competitionId, leaderId) {
+  constructor(name, avatarId, competitionId, leaderId, code) {
     this.name = name;
     this.avatarId = avatarId;
     this.competitionId = competitionId;
     this.leaderId = leaderId;
-    this.code = this.createTeamCode(name, competitionId);
+    this.code = code;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
 
-  async createTeamCode(name, competitionId) {
-    const nameSplit = name.split(" ");
+  static async create(name, avatarId, competitionId, leaderId) {
+    const code = await this.createTeamCode(competitionId);
+    return new Team(name, avatarId, competitionId, leaderId, code);
+  }
+
+  static async createTeamCode(competitionId) {
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    const nameSplit = competitionDoc.data().name.split(" ");
     let baseCode = "";
     // Generate base code from the first character of each word
     nameSplit.forEach((word) => {
@@ -28,18 +34,18 @@ class Team {
     while (!isCodeUnique && attemptCount < 10) {
       const randomCode = Math.random()
         .toString(36)
-        .substring(2, 3)
+        .substring(2, 6)
         .toUpperCase();
       teamCode = baseCode + randomCode;
       // Check if the team code is unique
-      const teamDoc = await getDoc(
+      const teamDoc = await getDocs(
         query(
           Teams,
           where("competitionId", "==", competitionId),
-          where("teamCode", "==", teamCode)
+          where("code", "==", teamCode)
         )
       );
-      if (!teamDoc.exists()) isCodeUnique = true;
+      isCodeUnique = teamDoc.empty;
       attemptCount++;
     }
     // If the team code is still not unique after 10 attempts
@@ -48,13 +54,13 @@ class Team {
     return teamCode;
   }
 
-  toObject() {
+  async toObject() {
     return {
       name: this.name,
       avatarId: this.avatarId,
       competitionId: this.competitionId,
       leaderId: this.leaderId,
-      code: this.code,
+      code: await this.code,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -66,7 +72,8 @@ class Team {
       data.name,
       data.avatarId,
       data.competitionId,
-      data.leaderId
+      data.leaderId,
+      data.code
     );
     team.id = doc.id;
     team.createdAt = formatDate(data.createdAt);

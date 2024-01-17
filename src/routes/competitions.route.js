@@ -74,6 +74,6 @@ router.put(
   competitionsController.addMissionToCompetition
 );
 
-router.use("/:competitionId/teams", teamsRoute);
+router.use("/teams", teamsRoute);
 
 export default router;
