@@ -83,6 +83,41 @@ const joinTeam = async (req, res) => {
   }
 };
 
+const chooseCharacter = async (req, res) => {
+  try {
+    const { role } = req.user.data;
+    if (role !== "user") return responseHandler.forbidden(res);
+
+    const { competitionId } = req.params;
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const { teamId } = req.params;
+    const teamDoc = await getDoc(doc(Teams, teamId));
+    if (!teamDoc.exists()) return responseHandler.notFound(res);
+
+    const { id } = req.user;
+    const { characterId } = req.body;
+
+    const teamMemberDoc = await getDoc(
+      query(
+        TeamMembers,
+        where("teamId", "==", teamId),
+        where("userId", "==", id),
+        where("competitionId", "==", competitionId)
+      )
+    );
+    if (!teamMemberDoc.exists()) return responseHandler.notFound(res);
+
+    const teamMemberRef = doc(TeamMembers, teamMemberDoc.id);
+    await updateDoc(teamMemberRef, { characterId, status: "accepted" });
+
+    responseHandler.ok(res, { message: "Character chosen successfully" });
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 
 
 // const getAllTeams = async (req, res) => {
