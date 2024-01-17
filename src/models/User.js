@@ -13,6 +13,7 @@ class User {
     this.isMembershipOn = false;
     this.xp = 0;
     this.point = 0;
+    this.teamMemberId = null;
     this.createdAt = new Date();
   }
 
@@ -29,6 +30,7 @@ class User {
       isMembershipOn: this.isMembershipOn,
       xp: this.xp,
       point: this.point,
+      teamMemberId: this.teamMemberId,
       createdAt: this.createdAt,
     };
   }
@@ -45,6 +47,7 @@ class User {
     user.isMembershipOn = data.isMembershipOn;
     user.xp = data.xp;
     user.point = data.point;
+    user.teamMemberId = data.teamMemberId;
     user.password = undefined;
     user.createdAt = formatDate(data.createdAt);
     return user;

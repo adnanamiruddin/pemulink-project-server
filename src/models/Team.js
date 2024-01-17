@@ -3,19 +3,19 @@ import { Competitions, Teams } from "../config/config.js";
 import { formatDate } from "../helpers/helper.js";
 
 class Team {
-  constructor(name, avatarId, competitionId, leaderId, code) {
+  constructor(name, avatarId, competitionId, status, code) {
     this.name = name;
     this.avatarId = avatarId;
     this.competitionId = competitionId;
-    this.leaderId = leaderId;
+    this.status = status;
     this.code = code;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
 
-  static async create(name, avatarId, competitionId, leaderId) {
+  static async create(name, avatarId, competitionId, status) {
     const code = await this.createTeamCode(competitionId);
-    return new Team(name, avatarId, competitionId, leaderId, code);
+    return new Team(name, avatarId, competitionId, status, code);
   }
 
   static async createTeamCode(competitionId) {
@@ -59,7 +59,7 @@ class Team {
       name: this.name,
       avatarId: this.avatarId,
       competitionId: this.competitionId,
-      leaderId: this.leaderId,
+      status: this.status,
       code: await this.code,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
@@ -72,7 +72,7 @@ class Team {
       data.name,
       data.avatarId,
       data.competitionId,
-      data.leaderId,
+      data.status,
       data.code
     );
     team.id = doc.id;

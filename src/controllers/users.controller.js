@@ -1,4 +1,4 @@
-import { TeamMembers, Users } from "../config/config.js";
+import { Competitions, TeamMembers, Users } from "../config/config.js";
 import {
   getDocs,
   doc,
@@ -96,6 +96,26 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const getUserTeam = async (req, res) => {
+  try {
+    const { role } = req.user.data;
+    if (role !== "user") return responseHandler.forbidden(res);
+
+    const { id } = req.user;
+    const { competitionId, teamId } = req.params;
+
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+    if (competitionDoc.data().status !== "started")
+      return responseHandler.badRequest(res, "Kompetisi sudah berakhir");
+
+    
+
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
 const updateUserToAdmin = async (req, res) => {
   try {
     const { role } = req.user.data;
@@ -115,4 +135,11 @@ const updateUserToAdmin = async (req, res) => {
   }
 };
 
-export default { signUp, signIn, getProfile, updateProfile, updateUserToAdmin };
+export default {
+  signUp,
+  signIn,
+  getProfile,
+  updateProfile,
+  getUserTeam,
+  updateUserToAdmin,
+};

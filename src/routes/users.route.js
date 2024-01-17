@@ -49,6 +49,12 @@ router.put(
   usersController.updateProfile
 );
 
+router.get(
+  "/:competitionId/: ",
+  tokenMiddleware.auth,
+  usersController.getUserTeam
+);
+
 router.put(
   "/update-to-admin/:id",
   tokenMiddleware.auth,

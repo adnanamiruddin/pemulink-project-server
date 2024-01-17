@@ -7,7 +7,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { Competitions, TeamMembers, Teams } from "../config/config.js";
+import { Competitions, TeamMembers, Teams, Users } from "../config/config.js";
 import responseHandler from "../handlers/response.handler.js";
 import Team from "../models/Team.js";
 import TeamMember from "../models/TeamMember.js";
@@ -20,11 +20,13 @@ const createTeam = async (req, res) => {
     const { competitionId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
+    if (competitionDoc.data().status !== "started")
+      return responseHandler.badRequest(res, "Kompetisi sudah berakhir");
 
     const { id } = req.user;
     const { name, avatarId, characterId } = req.body;
 
-    const team = await Team.create(name, avatarId, competitionId, id);
+    const team = await Team.create(name, avatarId, competitionId, "pending");
     const newTeam = await addDoc(Teams, await team.toObject());
 
     const teamMember = new TeamMember(
@@ -34,7 +36,11 @@ const createTeam = async (req, res) => {
       "leader",
       "accepted"
     );
-    await addDoc(TeamMembers, teamMember.toObject());
+    const newTeamMember = await addDoc(TeamMembers, teamMember.toObject());
+
+    await updateDoc(doc(Users, id), {
+      teamMemberId: newTeamMember.id,
+    });
 
     responseHandler.created(res, {
       id: newTeam.id,
@@ -54,6 +60,8 @@ const joinTeam = async (req, res) => {
     const { competitionId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
+    if (competitionDoc.data().status !== "started")
+      return responseHandler.badRequest(res, "Kompetisi sudah berakhir");
 
     const { id } = req.user;
     const { code } = req.body;
@@ -75,14 +83,18 @@ const joinTeam = async (req, res) => {
     if (teamMemberDoc.size >= 4)
       return responseHandler.badRequest(res, "Tim sudah penuh");
 
-    const newTeamMember = new TeamMember(
+    const teamMember = new TeamMember(
       teamDoc.docs[0].id,
       id,
       null,
       "member",
       "pending"
     );
-    await addDoc(TeamMembers, newTeamMember.toObject());
+    const newTeamMember = await addDoc(TeamMembers, teamMember.toObject());
+
+    await updateDoc(doc(Users, id), {
+      teamMemberId: newTeamMember.id,
+    });
 
     responseHandler.ok(res, { message: "Joined team successfully" });
   } catch (error) {
@@ -99,6 +111,8 @@ const chooseCharacter = async (req, res) => {
     const { competitionId, teamId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
+    if (competitionDoc.data().status !== "started")
+      return responseHandler.badRequest(res, "Kompetisi sudah berakhir");
 
     const teamDoc = await getDoc(doc(Teams, teamId));
     if (!teamDoc.exists()) return responseHandler.notFound(res);
