@@ -87,11 +87,10 @@ const chooseCharacter = async (req, res) => {
     const { role } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
 
-    const { competitionId } = req.params;
+    const { competitionId, teamId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    const { id: teamId } = req.params;
     const teamDoc = await getDoc(doc(Teams, teamId));
     if (!teamDoc.exists()) return responseHandler.notFound(res);
 
@@ -121,11 +120,10 @@ const getTeamDetailById = async (req, res) => {
     const { role } = req.user.data;
     if (role !== "user") return responseHandler.forbidden(res);
 
-    const { competitionId } = req.params;
+    const { competitionId, teamId } = req.params;
     const competitionDoc = await getDoc(doc(Competitions, competitionId));
     if (!competitionDoc.exists()) return responseHandler.notFound(res);
 
-    const { id: teamId } = req.params;
     const teamDoc = await getDoc(doc(Teams, teamId));
     if (!teamDoc.exists()) return responseHandler.notFound(res);
     const team = Team.toFormattedObject(teamDoc);
