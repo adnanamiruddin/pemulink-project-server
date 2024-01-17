@@ -11,7 +11,7 @@ router.post(
   [
     body("name").notEmpty().withMessage("Name is required"),
     body("avatarId").notEmpty().withMessage("Avatar id is required"),
-    body("userAvatarURL").notEmpty().withMessage("User Avatar is required"),
+    body("charactedId").notEmpty().withMessage("Character id is required"),
   ],
   requsetHandler.validate,
   tokenMiddleware.auth,

@@ -1,8 +1,8 @@
 class TeamMember {
-  constructor(teamId, userId, userAvatarURL, role, status) {
+  constructor(teamId, userId, characterId, role, status) {
     this.teamId = teamId;
     this.userId = userId;
-    this.userAvatarURL = userAvatarURL;
+    this.characterId = characterId;
     this.role = role;
     this.status = status;
     this.createdAt = new Date();
@@ -12,7 +12,7 @@ class TeamMember {
     return {
       teamId: this.teamId,
       userId: this.userId,
-      userAvatarURL: this.userAvatarURL,
+      characterId: this.characterId,
       role: this.role,
       status: this.status,
       createdAt: this.createdAt,
@@ -24,7 +24,7 @@ class TeamMember {
     const teamMember = new TeamMember(
       data.teamId,
       data.userId,
-      data.userAvatarURL,
+      data.characterId,
       data.role,
       data.status
     );
