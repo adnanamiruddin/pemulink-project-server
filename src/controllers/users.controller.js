@@ -1,4 +1,4 @@
-import { Users } from "../config/config.js";
+import { TeamMembers, Users } from "../config/config.js";
 import {
   getDocs,
   doc,
@@ -114,19 +114,5 @@ const updateUserToAdmin = async (req, res) => {
     responseHandler.error(res);
   }
 };
-
-// Delay
-// const changePassword = async (req, res) => {
-//   try {
-//     const { newPassword } = req.body;
-
-//     const auth = getAuth();
-//     await updatePassword(auth.currentUser, newPassword);
-
-//     responseHandler.ok(res, "Password updated successfully");
-//   } catch (error) {
-//     responseHandler.error(res);
-//   }
-// };
 
 export default { signUp, signIn, getProfile, updateProfile, updateUserToAdmin };

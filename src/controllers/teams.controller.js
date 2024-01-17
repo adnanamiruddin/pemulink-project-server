@@ -58,17 +58,25 @@ const joinTeam = async (req, res) => {
     const { id } = req.user;
     const { code } = req.body;
 
-    const teamDoc = await getDoc(
+    const teamDoc = await getDocs(
       query(
         Teams,
         where("competitionId", "==", competitionId),
         where("code", "==", code)
       )
     );
-    if (!teamDoc.exists()) return responseHandler.notFound(res);
+    if (teamDoc.empty)
+      return responseHandler.badRequest(res, "Tim tidak ditemukan");
+
+    // Validate maximum 4 member
+    const teamMemberDoc = await getDocs(
+      query(TeamMembers, where("teamId", "==", teamDoc.docs[0].id))
+    );
+    if (teamMemberDoc.size >= 4)
+      return responseHandler.badRequest(res, "Tim sudah penuh");
 
     const newTeamMember = new TeamMember(
-      teamDoc.id,
+      teamDoc.docs[0].id,
       id,
       null,
       "member",
@@ -78,6 +86,7 @@ const joinTeam = async (req, res) => {
 
     responseHandler.ok(res, { message: "Joined team successfully" });
   } catch (error) {
+    console.log(error);
     responseHandler.error(res);
   }
 };

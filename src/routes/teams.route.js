@@ -19,7 +19,7 @@ router.post(
 );
 
 router.post(
-  "/join",
+  "/:competitionId/join",
   [body("code").notEmpty().withMessage("Team Code is required")],
   requsetHandler.validate,
   tokenMiddleware.auth,
@@ -27,14 +27,18 @@ router.post(
 );
 
 router.put(
-  "/:teamId",
+  "/:competitionId/:teamId",
   [body("characterId").notEmpty().withMessage("Character id is required")],
   requsetHandler.validate,
   tokenMiddleware.auth,
   teamsController.chooseCharacter
 );
 
-router.get("/:teamId", tokenMiddleware.auth, teamsController.getTeamDetailById);
+router.get(
+  "/:competitionId/:teamId",
+  tokenMiddleware.auth,
+  teamsController.getTeamDetailById
+);
 
 // router.get("/", tokenMiddleware.auth, teamsController.getAllTeams);
 
