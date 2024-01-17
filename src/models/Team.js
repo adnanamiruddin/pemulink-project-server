@@ -3,16 +3,14 @@ import { Teams } from "../config/config.js";
 import { formatDate } from "../helpers/helper.js";
 
 class Team {
-  constructor(name, avatarURL, competitionId, members) {
+  constructor(name, avatarURL, competitionId, leaderId) {
     this.name = name;
     this.avatarURL = avatarURL;
     this.competitionId = competitionId;
     this.code = this.createTeamCode(name, competitionId);
-    this.members = [members];
     this.createdAt = new Date();
-    this.createdBy = members;
+    this.createdBy = leaderId;
     this.updatedAt = new Date();
-    this.updatedBy = members;
   }
 
   async createTeamCode(name, competitionId) {
@@ -56,7 +54,6 @@ class Team {
       avatarURL: this.avatarURL,
       competitionId: this.competitionId,
       code: this.code,
-      members: this.members,
       createdAt: this.createdAt,
       createdBy: this.createdBy,
       updatedAt: this.updatedAt,
@@ -70,7 +67,7 @@ class Team {
       data.name,
       data.avatarURL,
       data.competitionId,
-      data.members
+      data.createdBy
     );
     team.id = doc.id;
     team.createdAt = formatDate(data.createdAt);

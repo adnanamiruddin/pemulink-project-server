@@ -19,9 +19,9 @@ const createMission = async (req, res) => {
     if (role === "user") return responseHandler.forbidden(res);
 
     const { id } = req.user;
-    const { title } = req.body;
+    const { title, subTitle } = req.body;
 
-    const mission = new Mission(title, "", 0, 0, "pending");
+    const mission = new Mission(title, subTitle, "", 0, 0, "pending");
     mission.createdBy = id;
     mission.updatedBy = id;
 

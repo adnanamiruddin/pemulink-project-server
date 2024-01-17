@@ -24,6 +24,6 @@ export const MissionAcceptanceRequests = collection(
 );
 export const Competitions = collection(db, "competitions");
 export const Teams = collection(db, "teams");
+export const TeamMembers = collection(db, "team_members");
 
-// export const TeamMembers = collection(db, "team_members");
 // export const WasteBanks = collection(db, "waste_banks");

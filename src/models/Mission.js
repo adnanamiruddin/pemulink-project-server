@@ -1,8 +1,9 @@
 import { formatDate } from "../helpers/helper.js";
 
 class Mission {
-  constructor(title, description, pointReward, xpReward, status) {
+  constructor(title, subTitle, description, pointReward, xpReward, status) {
     this.title = title;
+    this.subTitle = null;
     this.description = description;
     this.pointReward = pointReward;
     this.xpReward = xpReward;
@@ -20,6 +21,7 @@ class Mission {
   toObject() {
     return {
       title: this.title,
+      subTitle: this.subTitle,
       description: this.description,
       pointReward: this.pointReward,
       xpReward: this.xpReward,
@@ -39,6 +41,7 @@ class Mission {
     const data = doc.data();
     const mission = new Mission(
       data.title,
+      data.subTitle,
       data.description,
       data.pointReward,
       data.xpReward,

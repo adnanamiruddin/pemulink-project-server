@@ -8,7 +8,10 @@ const router = express.Router();
 
 router.post(
   "/",
-  [body("title").notEmpty().withMessage("Title is required")],
+  [
+    body("title").notEmpty().withMessage("Title is required"),
+    body("subTitle").notEmpty().withMessage("Sub title is required"),
+  ],
   requsetHandler.validate,
   tokenMiddleware.auth,
   missionsController.createMission
