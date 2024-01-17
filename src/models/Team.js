@@ -9,6 +9,7 @@ class Team {
     this.competitionId = competitionId;
     this.status = status;
     this.code = code;
+    this.totalPoints = 0;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
@@ -61,6 +62,7 @@ class Team {
       competitionId: this.competitionId,
       status: this.status,
       code: await this.code,
+      totalPoints: this.totalPoints,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };
@@ -76,6 +78,7 @@ class Team {
       data.code
     );
     team.id = doc.id;
+    team.totalPoints = data.totalPoints;
     team.createdAt = formatDate(data.createdAt);
     team.updatedAt = formatDate(data.updatedAt);
     return team;
