@@ -98,7 +98,6 @@ const joinTeam = async (req, res) => {
 
     responseHandler.ok(res, { message: "Joined team successfully" });
   } catch (error) {
-    console.log(error);
     responseHandler.error(res);
   }
 };
@@ -120,17 +119,20 @@ const chooseCharacter = async (req, res) => {
     const { id } = req.user;
     const { characterId } = req.body;
 
-    const teamMemberDoc = await getDoc(
+    const teamMemberDoc = await getDocs(
       query(
         TeamMembers,
         where("teamId", "==", teamId),
         where("userId", "==", id)
       )
     );
-    if (!teamMemberDoc.exists()) return responseHandler.notFound(res);
+    if (teamMemberDoc.empty)
+      return responseHandler.badRequest(res, "Anda bukan anggota tim ini");
 
-    const teamMemberRef = doc(TeamMembers, teamMemberDoc.id);
-    await updateDoc(teamMemberRef, { characterId, status: "accepted" });
+    await updateDoc(doc(TeamMembers, teamMemberDoc.docs[0].id), {
+      characterId,
+      status: "accepted",
+    });
 
     responseHandler.ok(res, { message: "Character chosen successfully" });
   } catch (error) {
@@ -163,6 +165,32 @@ const getTeamDetailById = async (req, res) => {
       ...team,
       ...teamMember,
     });
+  } catch (error) {
+    responseHandler.error(res);
+  }
+};
+
+const startTeam = async (req, res) => {
+  try {
+    const { role } = req.user.data;
+    if (role !== "user") return responseHandler.forbidden(res);
+
+    const { competitionId, teamId } = req.params;
+
+    const competitionDoc = await getDoc(doc(Competitions, competitionId));
+    if (!competitionDoc.exists()) return responseHandler.notFound(res);
+
+    const teamDoc = await getDoc(doc(Teams, teamId));
+    if (!teamDoc.exists()) return responseHandler.notFound(res);
+
+    if (teamDoc.data().status !== "pending")
+      return responseHandler.badRequest(res, "Tim sudah dimulai");
+
+    await updateDoc(doc(Teams, teamId), {
+      status: "started",
+    });
+
+    responseHandler.ok(res, { message: "Team started successfully" });
   } catch (error) {
     responseHandler.error(res);
   }
@@ -201,5 +229,6 @@ export default {
   joinTeam,
   chooseCharacter,
   getTeamDetailById,
+  startTeam,
   // getAllTeams,
 };

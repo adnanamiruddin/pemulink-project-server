@@ -132,28 +132,19 @@ const getUserTeam = async (req, res) => {
     const querySnapshot = await getDocs(
       query(TeamMembers, where("teamId", "==", teamDoc.id))
     );
-    // await Promise.all(
-    //   querySnapshot.docs.map(async (docData) => {
-    //     const teamMember = TeamMember.toFormattedObject(docData);
-    //     const characterDoc = await getDoc(
-    //       doc(AvatarCharacters, teamMember.characterId)
-    //     );
-    //     const characterData = characterDoc.data();
-    //     teamMember.characterName = characterData.name;
-    //     teamMember.characterURL = characterData.characterURL;
-    //     teamMembers.push(teamMember);
-    //   })
-    // );
-    for (const docData of querySnapshot.docs) {
+    for (const docData of [...querySnapshot.docs].reverse()) {
       const userDoc = await getDoc(doc(Users, docData.data().userId));
       const user = userDoc.data();
       const teamMember = TeamMember.toFormattedObject(docData);
-      const characterDoc = await getDoc(
-        doc(AvatarCharacters, teamMember.characterId)
-      );
-      const characterData = characterDoc.data();
-      teamMember.characterName = characterData.name;
-      teamMember.characterURL = characterData.characterURL;
+      let characterData = {};
+      if (teamMember.characterId) {
+        const characterDoc = await getDoc(
+          doc(AvatarCharacters, teamMember.characterId)
+        );
+        characterData = characterDoc.data();
+      }
+      teamMember.characterName = characterData.name || null;
+      teamMember.characterURL = characterData.characterURL || null;
       teamMembers.push({ ...user, ...teamMember });
     }
 

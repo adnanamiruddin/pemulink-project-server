@@ -40,6 +40,12 @@ router.get(
   teamsController.getTeamDetailById
 );
 
+router.put(
+  "/:competitionId/:teamId/start",
+  tokenMiddleware.auth,
+  teamsController.startTeam
+);
+
 // router.get("/", tokenMiddleware.auth, teamsController.getAllTeams);
 
 export default router;
