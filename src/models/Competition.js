@@ -29,11 +29,7 @@ class Competition {
 
   static toFormattedObject(doc) {
     const data = doc.data();
-    const competition = new Competition(
-      data.name,
-      data.subTitle,
-      data.status
-    );
+    const competition = new Competition(data.name, data.subTitle, data.status);
     competition.id = doc.id;
     competition.startedAt =
       data.startedAt !== null ? formatDate(data.startedAt) : null;
